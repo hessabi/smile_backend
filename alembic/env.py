@@ -11,6 +11,7 @@ from app.models import (  # noqa: F401 - ensure all models are imported
     AuditLog,
     Clinic,
     ConsentRecord,
+    DentalSchool,
     Patient,
     PostProcedureImage,
     ShareToken,

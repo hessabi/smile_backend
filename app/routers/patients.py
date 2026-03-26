@@ -5,7 +5,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_verified_user
 from app.dependencies.subscription import require_active_subscription
 from app.models.patient import Patient
 from app.models.user import User
@@ -24,7 +24,7 @@ async def list_patients(
     search: str | None = Query(None),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     base = select(Patient).where(Patient.clinic_id == current_user.clinic_id)
@@ -55,7 +55,7 @@ async def list_patients(
 async def create_patient(
     body: PatientCreate,
     request: Request,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     patient = Patient(
@@ -86,7 +86,7 @@ async def create_patient(
 @router.get("/{patient_id}", response_model=PatientResponse)
 async def get_patient(
     patient_id: uuid.UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -107,7 +107,7 @@ async def update_patient(
     patient_id: uuid.UUID,
     body: PatientUpdate,
     request: Request,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(

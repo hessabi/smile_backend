@@ -76,6 +76,7 @@ from app.routers import (
     auth,
     clinics,
     consent,
+    dental_schools,
     images,
     patients,
     post_procedure,
@@ -86,6 +87,7 @@ from app.routers import (
 )
 
 app.include_router(auth.router)
+app.include_router(dental_schools.router)
 app.include_router(clinics.router)
 app.include_router(patients.router)
 app.include_router(simulations.router)

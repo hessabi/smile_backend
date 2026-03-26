@@ -10,6 +10,7 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.clinic import Clinic
+from app.models.subscription import Subscription
 from app.models.user import User
 from app.schemas.subscription import (
     CheckoutRequest,
@@ -24,7 +25,7 @@ from app.services.stripe_service import (
     handle_webhook_event,
 )
 
-router = APIRouter(prefix="/subscription", tags=["💳 Subscription"])
+router = APIRouter(prefix="/subscription", tags=["Subscription"])
 
 
 @router.get("/status", response_model=SubscriptionStatusResponse)
@@ -32,17 +33,19 @@ async def get_subscription_status(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Clinic).where(Clinic.id == current_user.clinic_id))
-    clinic = result.scalar_one_or_none()
-    if not clinic:
-        raise HTTPException(status_code=404, detail="Clinic not found")
+    result = await db.execute(
+        select(Subscription).where(Subscription.clinic_id == current_user.clinic_id)
+    )
+    subscription = result.scalar_one_or_none()
+    if not subscription:
+        raise HTTPException(status_code=404, detail="No subscription found")
 
     return SubscriptionStatusResponse(
-        subscription_status=clinic.subscription_status,
-        plan=clinic.plan,
-        trial_ends_at=clinic.trial_ends_at,
-        current_period_end=clinic.subscription_current_period_end,
-        stripe_customer_id=clinic.stripe_customer_id,
+        subscription_status=subscription.status,
+        plan=subscription.plan,
+        trial_ends_at=subscription.trial_ends_at,
+        current_period_end=subscription.current_period_end,
+        stripe_customer_id=subscription.stripe_customer_id,
     )
 
 
@@ -63,24 +66,33 @@ async def create_checkout(
     if not price_id:
         raise HTTPException(status_code=500, detail="Stripe price not configured")
 
-    result = await db.execute(select(Clinic).where(Clinic.id == current_user.clinic_id))
-    clinic = result.scalar_one_or_none()
-    if not clinic:
-        raise HTTPException(status_code=404, detail="Clinic not found")
+    result = await db.execute(
+        select(Subscription).where(Subscription.clinic_id == current_user.clinic_id)
+    )
+    subscription = result.scalar_one_or_none()
+    if not subscription:
+        raise HTTPException(status_code=404, detail="No subscription found")
 
     try:
-        checkout_url, customer_id = create_checkout_session(clinic, price_id)
+        checkout_url, customer_id = create_checkout_session(subscription, price_id)
     except Exception:
         logger.exception("Stripe checkout session creation failed")
         raise HTTPException(status_code=500, detail="Failed to create checkout session. Please try again.")
 
-    if not clinic.stripe_customer_id:
-        clinic.stripe_customer_id = customer_id
+    if not subscription.stripe_customer_id:
+        subscription.stripe_customer_id = customer_id
         await db.flush()
+
+        # Also update clinic (deprecated, for backward compat)
+        clinic_result = await db.execute(select(Clinic).where(Clinic.id == current_user.clinic_id))
+        clinic = clinic_result.scalar_one_or_none()
+        if clinic:
+            clinic.stripe_customer_id = customer_id
+            await db.flush()
 
     await log_action(
         db,
-        clinic_id=clinic.id,
+        clinic_id=current_user.clinic_id,
         user_id=current_user.id,
         action="subscription.checkout_created",
         resource_type="subscription",
@@ -97,16 +109,18 @@ async def create_portal(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Clinic).where(Clinic.id == current_user.clinic_id))
-    clinic = result.scalar_one_or_none()
-    if not clinic:
-        raise HTTPException(status_code=404, detail="Clinic not found")
+    result = await db.execute(
+        select(Subscription).where(Subscription.clinic_id == current_user.clinic_id)
+    )
+    subscription = result.scalar_one_or_none()
+    if not subscription:
+        raise HTTPException(status_code=404, detail="No subscription found")
 
-    if not clinic.stripe_customer_id:
+    if not subscription.stripe_customer_id:
         raise HTTPException(status_code=400, detail="No active subscription. Please subscribe first.")
 
     try:
-        portal_url = create_customer_portal_session(clinic)
+        portal_url = create_customer_portal_session(subscription)
     except Exception:
         logger.exception("Stripe portal session creation failed")
         raise HTTPException(status_code=500, detail="Failed to create portal session. Please try again.")

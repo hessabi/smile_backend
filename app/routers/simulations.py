@@ -8,10 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_verified_user
 from app.dependencies.subscription import require_active_subscription
 from app.models.clinic import Clinic
 from app.models.patient import Patient
+from app.models.subscription import Subscription
 from app.models.post_procedure import PostProcedureImage
 from app.models.simulation import Simulation
 from app.models.user import User
@@ -46,7 +47,7 @@ async def _get_simulation_response(sim: Simulation) -> SimulationResponse:
 async def create_simulation(
     body: SimulationCreate,
     request: Request,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     clinic_id = current_user.clinic_id
@@ -70,9 +71,9 @@ async def create_simulation(
         raise HTTPException(status_code=400, detail="Invalid shade")
 
     # Trial daily limit check
-    clinic_result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
-    clinic = clinic_result.scalar_one_or_none()
-    if clinic and clinic.subscription_status == "trial":
+    sub_result = await db.execute(select(Subscription).where(Subscription.clinic_id == clinic_id))
+    subscription = sub_result.scalar_one_or_none()
+    if subscription and subscription.status == "trial":
         today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         count_result = await db.execute(
             select(func.count()).where(
@@ -173,7 +174,7 @@ async def create_simulation(
 @router.get("/simulations/{simulation_id}", response_model=SimulationResponse)
 async def get_simulation(
     simulation_id: uuid.UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -192,7 +193,7 @@ async def get_simulation(
 @router.get("/simulations/{simulation_id}/full", response_model=FullSimulationResponse)
 async def get_simulation_full(
     simulation_id: uuid.UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -230,7 +231,7 @@ async def get_simulation_full(
 @router.get("/simulations/{simulation_id}/pdf")
 async def get_simulation_pdf(
     simulation_id: uuid.UUID,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -295,7 +296,7 @@ async def send_simulation_email(
     simulation_id: uuid.UUID,
     body: SendEmailRequest,
     request: Request,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -421,7 +422,7 @@ async def list_patient_simulations(
     patient_id: uuid.UUID,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_verified_user),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(

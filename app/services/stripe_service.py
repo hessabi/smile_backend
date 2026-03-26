@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.clinic import Clinic
+from app.models.subscription import Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -15,16 +16,16 @@ def _init_stripe() -> None:
     stripe.api_key = settings.stripe_secret_key
 
 
-def create_checkout_session(clinic: Clinic, price_id: str) -> str:
+def create_checkout_session(subscription: Subscription, price_id: str) -> str:
     _init_stripe()
 
-    if not clinic.stripe_customer_id:
+    if not subscription.stripe_customer_id:
         customer = stripe.Customer.create(
-            metadata={"clinic_id": str(clinic.id)},
+            metadata={"clinic_id": str(subscription.clinic_id)},
         )
         customer_id = customer.id
     else:
-        customer_id = clinic.stripe_customer_id
+        customer_id = subscription.stripe_customer_id
 
     session = stripe.checkout.Session.create(
         customer=customer_id,
@@ -34,20 +35,20 @@ def create_checkout_session(clinic: Clinic, price_id: str) -> str:
         allow_promotion_codes=True,
         success_url=f"{settings.frontend_url}/subscription/success?session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{settings.frontend_url}/subscription/cancel",
-        metadata={"clinic_id": str(clinic.id)},
+        metadata={"clinic_id": str(subscription.clinic_id)},
     )
 
     return session.url, customer_id
 
 
-def create_customer_portal_session(clinic: Clinic) -> str:
+def create_customer_portal_session(subscription: Subscription) -> str:
     _init_stripe()
 
-    if not clinic.stripe_customer_id:
-        raise ValueError("Clinic has no Stripe customer")
+    if not subscription.stripe_customer_id:
+        raise ValueError("Subscription has no Stripe customer")
 
     session = stripe.billing_portal.Session.create(
-        customer=clinic.stripe_customer_id,
+        customer=subscription.stripe_customer_id,
         return_url=f"{settings.frontend_url}/settings",
     )
 
@@ -77,25 +78,38 @@ async def handle_webhook_event(
             logger.warning("checkout.session.completed missing clinic_id in metadata")
             return
 
-        result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
-        clinic = result.scalar_one_or_none()
-        if not clinic:
-            logger.warning("checkout.session.completed: clinic %s not found", clinic_id)
+        # Find subscription by clinic_id
+        result = await db.execute(
+            select(Subscription).where(Subscription.clinic_id == clinic_id)
+        )
+        subscription = result.scalar_one_or_none()
+        if not subscription:
+            logger.warning("checkout.session.completed: no subscription for clinic %s", clinic_id)
             return
 
-        clinic.stripe_customer_id = data.get("customer")
-        clinic.stripe_subscription_id = data.get("subscription")
-        clinic.subscription_status = "active"
+        subscription.stripe_customer_id = data.get("customer")
+        subscription.stripe_subscription_id = data.get("subscription")
+        subscription.status = "active"
+        subscription.plan = "standard_monthly"  # or determine from price
         await db.flush()
+
+        # Also update clinic (deprecated, for backward compat)
+        clinic_result = await db.execute(select(Clinic).where(Clinic.id == subscription.clinic_id))
+        clinic = clinic_result.scalar_one_or_none()
+        if clinic:
+            clinic.stripe_customer_id = subscription.stripe_customer_id
+            clinic.stripe_subscription_id = subscription.stripe_subscription_id
+            clinic.subscription_status = subscription.status
+            await db.flush()
 
     elif event_type == "customer.subscription.updated":
         sub_id = data.get("id")
         result = await db.execute(
-            select(Clinic).where(Clinic.stripe_subscription_id == sub_id)
+            select(Subscription).where(Subscription.stripe_subscription_id == sub_id)
         )
-        clinic = result.scalar_one_or_none()
-        if not clinic:
-            logger.warning("subscription.updated: no clinic for subscription %s", sub_id)
+        subscription = result.scalar_one_or_none()
+        if not subscription:
+            logger.warning("subscription.updated: no subscription for stripe sub %s", sub_id)
             return
 
         stripe_status = data.get("status")
@@ -106,40 +120,81 @@ async def handle_webhook_event(
             "unpaid": "unpaid",
             "trialing": "trial",
         }
-        clinic.subscription_status = status_map.get(stripe_status, stripe_status)
+        subscription.status = status_map.get(stripe_status, stripe_status)
 
         period_end = data.get("current_period_end")
         if period_end:
-            clinic.subscription_current_period_end = datetime.fromtimestamp(
+            subscription.current_period_end = datetime.fromtimestamp(
                 period_end, tz=timezone.utc
             )
         await db.flush()
 
+        # Also update clinic (deprecated, for backward compat)
+        clinic_result = await db.execute(select(Clinic).where(Clinic.id == subscription.clinic_id))
+        clinic = clinic_result.scalar_one_or_none()
+        if clinic:
+            clinic.subscription_status = subscription.status
+            if period_end:
+                clinic.subscription_current_period_end = subscription.current_period_end
+            await db.flush()
+
     elif event_type == "customer.subscription.deleted":
         sub_id = data.get("id")
         result = await db.execute(
-            select(Clinic).where(Clinic.stripe_subscription_id == sub_id)
+            select(Subscription).where(Subscription.stripe_subscription_id == sub_id)
         )
-        clinic = result.scalar_one_or_none()
-        if not clinic:
+        subscription = result.scalar_one_or_none()
+        if not subscription:
             return
 
-        clinic.subscription_status = "canceled"
+        subscription.status = "canceled"
         await db.flush()
+
+        # Also update clinic (deprecated, for backward compat)
+        clinic_result = await db.execute(select(Clinic).where(Clinic.id == subscription.clinic_id))
+        clinic = clinic_result.scalar_one_or_none()
+        if clinic:
+            clinic.subscription_status = "canceled"
+            await db.flush()
 
     elif event_type == "invoice.payment_failed":
         sub_id = data.get("subscription")
         if not sub_id:
             return
         result = await db.execute(
-            select(Clinic).where(Clinic.stripe_subscription_id == sub_id)
+            select(Subscription).where(Subscription.stripe_subscription_id == sub_id)
         )
-        clinic = result.scalar_one_or_none()
-        if not clinic:
+        subscription = result.scalar_one_or_none()
+        if not subscription:
             return
 
-        clinic.subscription_status = "past_due"
+        subscription.status = "past_due"
         await db.flush()
+
+        # Also update clinic (deprecated, for backward compat)
+        clinic_result = await db.execute(select(Clinic).where(Clinic.id == subscription.clinic_id))
+        clinic = clinic_result.scalar_one_or_none()
+        if clinic:
+            clinic.subscription_status = "past_due"
+            await db.flush()
 
     else:
         logger.info("Unhandled Stripe event: %s", event_type)
+
+
+def create_student_stripe_subscription(clinic_id: str, email: str) -> tuple[str, str]:
+    """Creates a $0 Stripe subscription for a student. Returns (customer_id, subscription_id)."""
+    _init_stripe()
+
+    customer = stripe.Customer.create(
+        email=email,
+        metadata={"clinic_id": clinic_id, "plan": "student"},
+    )
+
+    subscription = stripe.Subscription.create(
+        customer=customer.id,
+        items=[{"price": settings.stripe_price_id_student}],
+        metadata={"clinic_id": clinic_id, "plan": "student"},
+    )
+
+    return customer.id, subscription.id

@@ -1,0 +1,668 @@
+[
+  {
+    "name": "University of Alabama School of Dentistry",
+    "short_name": "UAB Dentistry",
+    "university": "University of Alabama at Birmingham",
+    "city": "Birmingham",
+    "state": "AL",
+    "country": "US",
+    "email_domain": "uab.edu"
+  },
+  {
+    "name": "Arizona School of Dentistry & Oral Health",
+    "short_name": "ASDOH",
+    "university": "A.T. Still University",
+    "city": "Mesa",
+    "state": "AZ",
+    "country": "US",
+    "email_domain": "atsu.edu"
+  },
+  {
+    "name": "Midwestern University College of Dental Medicine - Arizona",
+    "short_name": "MWU Arizona",
+    "university": "Midwestern University",
+    "city": "Glendale",
+    "state": "AZ",
+    "country": "US",
+    "email_domain": "midwestern.edu"
+  },
+  {
+    "name": "Lyon College School of Dental Medicine",
+    "short_name": "Lyon Dental",
+    "university": "Lyon College",
+    "city": "Batesville",
+    "state": "AR",
+    "country": "US",
+    "email_domain": "lyon.edu"
+  },
+  {
+    "name": "California Northstate University College of Dental Medicine",
+    "short_name": "CNU Dental",
+    "university": "California Northstate University",
+    "city": "Elk Grove",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "cnsu.edu"
+  },
+  {
+    "name": "Herman Ostrow School of Dentistry of USC",
+    "short_name": "USC Dentistry",
+    "university": "University of Southern California",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "usc.edu"
+  },
+  {
+    "name": "Loma Linda University School of Dentistry",
+    "short_name": "LLU Dentistry",
+    "university": "Loma Linda University",
+    "city": "Loma Linda",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "llu.edu"
+  },
+  {
+    "name": "UCLA School of Dentistry",
+    "short_name": "UCLA Dentistry",
+    "university": "University of California, Los Angeles",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "ucla.edu"
+  },
+  {
+    "name": "UCSF School of Dentistry",
+    "short_name": "UCSF Dentistry",
+    "university": "University of California, San Francisco",
+    "city": "San Francisco",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "ucsf.edu"
+  },
+  {
+    "name": "University of the Pacific Arthur A. Dugoni School of Dentistry",
+    "short_name": "Dugoni",
+    "university": "University of the Pacific",
+    "city": "San Francisco",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "pacific.edu"
+  },
+  {
+    "name": "Western University of Health Sciences College of Dental Medicine",
+    "short_name": "WesternU Dental",
+    "university": "Western University of Health Sciences",
+    "city": "Pomona",
+    "state": "CA",
+    "country": "US",
+    "email_domain": "westernu.edu"
+  },
+  {
+    "name": "University of Colorado School of Dental Medicine",
+    "short_name": "CU Dentistry",
+    "university": "University of Colorado",
+    "city": "Aurora",
+    "state": "CO",
+    "country": "US",
+    "email_domain": "cuanschutz.edu"
+  },
+  {
+    "name": "University of Connecticut School of Dental Medicine",
+    "short_name": "UConn Dental",
+    "university": "University of Connecticut",
+    "city": "Farmington",
+    "state": "CT",
+    "country": "US",
+    "email_domain": "uconn.edu"
+  },
+  {
+    "name": "Howard University College of Dentistry",
+    "short_name": "Howard Dentistry",
+    "university": "Howard University",
+    "city": "Washington",
+    "state": "DC",
+    "country": "US",
+    "email_domain": "howard.edu"
+  },
+  {
+    "name": "LECOM School of Dental Medicine",
+    "short_name": "LECOM Dental",
+    "university": "Lake Erie College of Osteopathic Medicine",
+    "city": "Bradenton",
+    "state": "FL",
+    "country": "US",
+    "email_domain": "lecom.edu"
+  },
+  {
+    "name": "Nova Southeastern University College of Dental Medicine",
+    "short_name": "NSU Dental",
+    "university": "Nova Southeastern University",
+    "city": "Ft. Lauderdale",
+    "state": "FL",
+    "country": "US",
+    "email_domain": "nova.edu"
+  },
+  {
+    "name": "University of Florida College of Dentistry",
+    "short_name": "UF Dentistry",
+    "university": "University of Florida",
+    "city": "Gainesville",
+    "state": "FL",
+    "country": "US",
+    "email_domain": "ufl.edu"
+  },
+  {
+    "name": "The Dental College of Georgia at Augusta University",
+    "short_name": "DCG",
+    "university": "Augusta University",
+    "city": "Augusta",
+    "state": "GA",
+    "country": "US",
+    "email_domain": "augusta.edu"
+  },
+  {
+    "name": "University of Illinois at Chicago College of Dentistry",
+    "short_name": "UIC Dentistry",
+    "university": "University of Illinois at Chicago",
+    "city": "Chicago",
+    "state": "IL",
+    "country": "US",
+    "email_domain": "uic.edu"
+  },
+  {
+    "name": "Midwestern University College of Dental Medicine - Illinois",
+    "short_name": "MWU Illinois",
+    "university": "Midwestern University",
+    "city": "Downers Grove",
+    "state": "IL",
+    "country": "US",
+    "email_domain": "midwestern.edu"
+  },
+  {
+    "name": "Southern Illinois University School of Dental Medicine",
+    "short_name": "SIU Dental",
+    "university": "Southern Illinois University Edwardsville",
+    "city": "Alton",
+    "state": "IL",
+    "country": "US",
+    "email_domain": "siue.edu"
+  },
+  {
+    "name": "Indiana University School of Dentistry",
+    "short_name": "IU Dentistry",
+    "university": "Indiana University",
+    "city": "Indianapolis",
+    "state": "IN",
+    "country": "US",
+    "email_domain": "iu.edu"
+  },
+  {
+    "name": "The University of Iowa College of Dentistry",
+    "short_name": "Iowa Dentistry",
+    "university": "University of Iowa",
+    "city": "Iowa City",
+    "state": "IA",
+    "country": "US",
+    "email_domain": "uiowa.edu"
+  },
+  {
+    "name": "University of Kentucky College of Dentistry",
+    "short_name": "UK Dentistry",
+    "university": "University of Kentucky",
+    "city": "Lexington",
+    "state": "KY",
+    "country": "US",
+    "email_domain": "uky.edu"
+  },
+  {
+    "name": "University of Louisville School of Dentistry",
+    "short_name": "UofL Dentistry",
+    "university": "University of Louisville",
+    "city": "Louisville",
+    "state": "KY",
+    "country": "US",
+    "email_domain": "louisville.edu"
+  },
+  {
+    "name": "University of Pikeville Tanner College of Dental Medicine",
+    "short_name": "UPike Dental",
+    "university": "University of Pikeville",
+    "city": "Pikeville",
+    "state": "KY",
+    "country": "US",
+    "email_domain": "upike.edu"
+  },
+  {
+    "name": "LSU Health Science Center School of Dentistry",
+    "short_name": "LSU Dentistry",
+    "university": "Louisiana State University Health Sciences Center",
+    "city": "New Orleans",
+    "state": "LA",
+    "country": "US",
+    "email_domain": "lsuhsc.edu"
+  },
+  {
+    "name": "University of New England College of Dental Medicine",
+    "short_name": "UNE Dental",
+    "university": "University of New England",
+    "city": "Portland",
+    "state": "ME",
+    "country": "US",
+    "email_domain": "une.edu"
+  },
+  {
+    "name": "University of Maryland School of Dentistry",
+    "short_name": "UMD Dentistry",
+    "university": "University of Maryland, Baltimore",
+    "city": "Baltimore",
+    "state": "MD",
+    "country": "US",
+    "email_domain": "umaryland.edu"
+  },
+  {
+    "name": "Boston University Henry M. Goldman School of Dental Medicine",
+    "short_name": "BU Dental",
+    "university": "Boston University",
+    "city": "Boston",
+    "state": "MA",
+    "country": "US",
+    "email_domain": "bu.edu"
+  },
+  {
+    "name": "Harvard University School of Dental Medicine",
+    "short_name": "Harvard Dental",
+    "university": "Harvard University",
+    "city": "Boston",
+    "state": "MA",
+    "country": "US",
+    "email_domain": "harvard.edu"
+  },
+  {
+    "name": "Tufts University School of Dental Medicine",
+    "short_name": "Tufts Dental",
+    "university": "Tufts University",
+    "city": "Boston",
+    "state": "MA",
+    "country": "US",
+    "email_domain": "tufts.edu"
+  },
+  {
+    "name": "University of Detroit Mercy School of Dentistry",
+    "short_name": "UDM Dentistry",
+    "university": "University of Detroit Mercy",
+    "city": "Detroit",
+    "state": "MI",
+    "country": "US",
+    "email_domain": "udmercy.edu"
+  },
+  {
+    "name": "University of Michigan School of Dentistry",
+    "short_name": "UMich Dentistry",
+    "university": "University of Michigan",
+    "city": "Ann Arbor",
+    "state": "MI",
+    "country": "US",
+    "email_domain": "umich.edu"
+  },
+  {
+    "name": "University of Minnesota School of Dentistry",
+    "short_name": "UMN Dentistry",
+    "university": "University of Minnesota",
+    "city": "Minneapolis",
+    "state": "MN",
+    "country": "US",
+    "email_domain": "umn.edu"
+  },
+  {
+    "name": "University of Mississippi Medical Center School of Dentistry",
+    "short_name": "UMMC Dentistry",
+    "university": "University of Mississippi Medical Center",
+    "city": "Jackson",
+    "state": "MS",
+    "country": "US",
+    "email_domain": "umc.edu"
+  },
+  {
+    "name": "Kansas City University College of Dental Medicine",
+    "short_name": "KCU Dental",
+    "university": "Kansas City University",
+    "city": "Joplin",
+    "state": "MO",
+    "country": "US",
+    "email_domain": "kcu.edu"
+  },
+  {
+    "name": "Missouri School of Dentistry & Oral Health at ATSU",
+    "short_name": "MOSDOH",
+    "university": "A.T. Still University",
+    "city": "Kirksville",
+    "state": "MO",
+    "country": "US",
+    "email_domain": "atsu.edu"
+  },
+  {
+    "name": "University of Missouri-Kansas City School of Dentistry",
+    "short_name": "UMKC Dentistry",
+    "university": "University of Missouri-Kansas City",
+    "city": "Kansas City",
+    "state": "MO",
+    "country": "US",
+    "email_domain": "umkc.edu"
+  },
+  {
+    "name": "Creighton University School of Dentistry",
+    "short_name": "Creighton Dental",
+    "university": "Creighton University",
+    "city": "Omaha",
+    "state": "NE",
+    "country": "US",
+    "email_domain": "creighton.edu"
+  },
+  {
+    "name": "University of Nebraska Medical Center College of Dentistry",
+    "short_name": "UNMC Dentistry",
+    "university": "University of Nebraska Medical Center",
+    "city": "Lincoln",
+    "state": "NE",
+    "country": "US",
+    "email_domain": "unmc.edu"
+  },
+  {
+    "name": "University of Nevada Las Vegas School of Dental Medicine",
+    "short_name": "UNLV Dental",
+    "university": "University of Nevada, Las Vegas",
+    "city": "Las Vegas",
+    "state": "NV",
+    "country": "US",
+    "email_domain": "unlv.edu"
+  },
+  {
+    "name": "Rutgers School of Dental Medicine",
+    "short_name": "Rutgers Dental",
+    "university": "Rutgers University",
+    "city": "Newark",
+    "state": "NJ",
+    "country": "US",
+    "email_domain": "rutgers.edu"
+  },
+  {
+    "name": "Columbia University College of Dental Medicine",
+    "short_name": "Columbia Dental",
+    "university": "Columbia University",
+    "city": "New York",
+    "state": "NY",
+    "country": "US",
+    "email_domain": "columbia.edu"
+  },
+  {
+    "name": "New York University College of Dentistry",
+    "short_name": "NYU Dentistry",
+    "university": "New York University",
+    "city": "New York",
+    "state": "NY",
+    "country": "US",
+    "email_domain": "nyu.edu"
+  },
+  {
+    "name": "Stony Brook University School of Dental Medicine",
+    "short_name": "Stony Brook Dental",
+    "university": "Stony Brook University",
+    "city": "Stony Brook",
+    "state": "NY",
+    "country": "US",
+    "email_domain": "stonybrook.edu"
+  },
+  {
+    "name": "Touro College of Dental Medicine at New York Medical College",
+    "short_name": "Touro Dental",
+    "university": "Touro University",
+    "city": "Hawthorne",
+    "state": "NY",
+    "country": "US",
+    "email_domain": "touro.edu"
+  },
+  {
+    "name": "University at Buffalo School of Dental Medicine",
+    "short_name": "UB Dental",
+    "university": "University at Buffalo",
+    "city": "Buffalo",
+    "state": "NY",
+    "country": "US",
+    "email_domain": "buffalo.edu"
+  },
+  {
+    "name": "East Carolina University School of Dental Medicine",
+    "short_name": "ECU Dental",
+    "university": "East Carolina University",
+    "city": "Greenville",
+    "state": "NC",
+    "country": "US",
+    "email_domain": "ecu.edu"
+  },
+  {
+    "name": "High Point University School of Dental Medicine",
+    "short_name": "HPU Dental",
+    "university": "High Point University",
+    "city": "High Point",
+    "state": "NC",
+    "country": "US",
+    "email_domain": "highpoint.edu"
+  },
+  {
+    "name": "University of North Carolina School of Dentistry",
+    "short_name": "UNC Dentistry",
+    "university": "University of North Carolina at Chapel Hill",
+    "city": "Chapel Hill",
+    "state": "NC",
+    "country": "US",
+    "email_domain": "unc.edu"
+  },
+  {
+    "name": "Case Western Reserve University School of Dental Medicine",
+    "short_name": "CWRU Dental",
+    "university": "Case Western Reserve University",
+    "city": "Cleveland",
+    "state": "OH",
+    "country": "US",
+    "email_domain": "case.edu"
+  },
+  {
+    "name": "Ohio State University College of Dentistry",
+    "short_name": "OSU Dentistry",
+    "university": "Ohio State University",
+    "city": "Columbus",
+    "state": "OH",
+    "country": "US",
+    "email_domain": "osu.edu"
+  },
+  {
+    "name": "University of Oklahoma College of Dentistry",
+    "short_name": "OU Dentistry",
+    "university": "University of Oklahoma",
+    "city": "Oklahoma City",
+    "state": "OK",
+    "country": "US",
+    "email_domain": "ouhsc.edu"
+  },
+  {
+    "name": "Oregon Health & Science University School of Dentistry",
+    "short_name": "OHSU Dentistry",
+    "university": "Oregon Health & Science University",
+    "city": "Portland",
+    "state": "OR",
+    "country": "US",
+    "email_domain": "ohsu.edu"
+  },
+  {
+    "name": "University of Pennsylvania School of Dental Medicine",
+    "short_name": "Penn Dental",
+    "university": "University of Pennsylvania",
+    "city": "Philadelphia",
+    "state": "PA",
+    "country": "US",
+    "email_domain": "upenn.edu"
+  },
+  {
+    "name": "University of Pittsburgh School of Dental Medicine",
+    "short_name": "Pitt Dental",
+    "university": "University of Pittsburgh",
+    "city": "Pittsburgh",
+    "state": "PA",
+    "country": "US",
+    "email_domain": "pitt.edu"
+  },
+  {
+    "name": "Temple University Kornberg School of Dentistry",
+    "short_name": "Temple Dental",
+    "university": "Temple University",
+    "city": "Philadelphia",
+    "state": "PA",
+    "country": "US",
+    "email_domain": "temple.edu"
+  },
+  {
+    "name": "University of Puerto Rico School of Dental Medicine",
+    "short_name": "UPR Dental",
+    "university": "University of Puerto Rico",
+    "city": "San Juan",
+    "state": "PR",
+    "country": "US",
+    "email_domain": "upr.edu"
+  },
+  {
+    "name": "Medical University of South Carolina College of Dental Medicine",
+    "short_name": "MUSC Dental",
+    "university": "Medical University of South Carolina",
+    "city": "Charleston",
+    "state": "SC",
+    "country": "US",
+    "email_domain": "musc.edu"
+  },
+  {
+    "name": "Meharry Medical College School of Dentistry",
+    "short_name": "Meharry Dental",
+    "university": "Meharry Medical College",
+    "city": "Nashville",
+    "state": "TN",
+    "country": "US",
+    "email_domain": "mmc.edu"
+  },
+  {
+    "name": "University of Tennessee Health Science Center College of Dentistry",
+    "short_name": "UTHSC Dentistry",
+    "university": "University of Tennessee Health Science Center",
+    "city": "Memphis",
+    "state": "TN",
+    "country": "US",
+    "email_domain": "uthsc.edu"
+  },
+  {
+    "name": "Lincoln Memorial University College of Dental Medicine",
+    "short_name": "LMU Dental",
+    "university": "Lincoln Memorial University",
+    "city": "Knoxville",
+    "state": "TN",
+    "country": "US",
+    "email_domain": "lmunet.edu"
+  },
+  {
+    "name": "Texas A&M University College of Dentistry",
+    "short_name": "TAMU Dentistry",
+    "university": "Texas A&M University",
+    "city": "Dallas",
+    "state": "TX",
+    "country": "US",
+    "email_domain": "tamu.edu"
+  },
+  {
+    "name": "Texas Tech University HSC El Paso Hunt School of Dentistry",
+    "short_name": "TTUHSC Dentistry",
+    "university": "Texas Tech University Health Sciences Center El Paso",
+    "city": "El Paso",
+    "state": "TX",
+    "country": "US",
+    "email_domain": "ttuhsc.edu"
+  },
+  {
+    "name": "University of Texas Health Science Center at Houston School of Dentistry",
+    "short_name": "UTHealth Houston Dental",
+    "university": "University of Texas Health Science Center at Houston",
+    "city": "Houston",
+    "state": "TX",
+    "country": "US",
+    "email_domain": "uth.tmc.edu"
+  },
+  {
+    "name": "University of Texas Health Science Center at San Antonio School of Dentistry",
+    "short_name": "UTHSA Dentistry",
+    "university": "University of Texas Health Science Center at San Antonio",
+    "city": "San Antonio",
+    "state": "TX",
+    "country": "US",
+    "email_domain": "uthscsa.edu"
+  },
+  {
+    "name": "Roseman University of Health Sciences College of Dental Medicine",
+    "short_name": "Roseman Dental",
+    "university": "Roseman University of Health Sciences",
+    "city": "South Jordan",
+    "state": "UT",
+    "country": "US",
+    "email_domain": "roseman.edu"
+  },
+  {
+    "name": "University of Utah School of Dentistry",
+    "short_name": "Utah Dentistry",
+    "university": "University of Utah",
+    "city": "Salt Lake City",
+    "state": "UT",
+    "country": "US",
+    "email_domain": "utah.edu"
+  },
+  {
+    "name": "Virginia Commonwealth University School of Dentistry",
+    "short_name": "VCU Dentistry",
+    "university": "Virginia Commonwealth University",
+    "city": "Richmond",
+    "state": "VA",
+    "country": "US",
+    "email_domain": "vcu.edu"
+  },
+  {
+    "name": "University of Washington School of Dentistry",
+    "short_name": "UW Dentistry",
+    "university": "University of Washington",
+    "city": "Seattle",
+    "state": "WA",
+    "country": "US",
+    "email_domain": "uw.edu"
+  },
+  {
+    "name": "Pacific Northwest University School of Dental Medicine",
+    "short_name": "PNWU Dental",
+    "university": "Pacific Northwest University of Health Sciences",
+    "city": "Yakima",
+    "state": "WA",
+    "country": "US",
+    "email_domain": "pnwu.edu"
+  },
+  {
+    "name": "West Virginia University School of Dentistry",
+    "short_name": "WVU Dentistry",
+    "university": "West Virginia University",
+    "city": "Morgantown",
+    "state": "WV",
+    "country": "US",
+    "email_domain": "wvu.edu"
+  },
+  {
+    "name": "Marquette University School of Dentistry",
+    "short_name": "Marquette Dental",
+    "university": "Marquette University",
+    "city": "Milwaukee",
+    "state": "WI",
+    "country": "US",
+    "email_domain": "marquette.edu"
+  }
+]

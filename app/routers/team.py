@@ -8,6 +8,7 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies.auth import require_roles
 from app.dependencies.subscription import require_active_subscription
+from app.models.clinic import Clinic
 from app.models.user import User
 from app.schemas.team import ALLOWED_ROLES, InviteRequest, TeamMemberResponse, TeamUpdateRequest
 from app.services.audit import log_action
@@ -35,6 +36,12 @@ async def invite_team_member(
     current_user: User = Depends(require_roles("owner", "office_admin")),
     db: AsyncSession = Depends(get_db),
 ):
+    # Check if clinic is a student account
+    clinic_result = await db.execute(select(Clinic).where(Clinic.id == current_user.clinic_id))
+    clinic = clinic_result.scalar_one_or_none()
+    if clinic and clinic.account_type == "student":
+        raise HTTPException(status_code=403, detail="Student accounts are limited to 1 user")
+
     if body.role not in ALLOWED_ROLES:
         raise HTTPException(
             status_code=400,

@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_price_id_monthly: str = ""
     stripe_price_id_annual: str = ""
+    stripe_price_id_student: str = ""
     trial_days: int = 3
     trial_daily_simulation_limit: int = 3
     max_clinic_users: int = 5
