@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     stripe_price_id_student: str = ""
     trial_days: int = 3
     trial_daily_simulation_limit: int = 3
+    gemini_flash_model: str = "gemini-2.0-flash"
     max_clinic_users: int = 5
     frontend_url: str = "http://localhost:3000"
     docs_api_key: str = ""

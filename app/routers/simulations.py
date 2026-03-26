@@ -24,6 +24,7 @@ from app.schemas.simulation import (
 )
 from app.services.audit import log_action
 from app.services.gemini import generate_smile
+from app.services.image_validator import validate_dental_image
 from app.services.storage import download_image, generate_download_url, upload_image
 
 router = APIRouter(tags=["😁 Simulations"], dependencies=[Depends(require_active_subscription)])
@@ -118,6 +119,24 @@ async def create_simulation(
     except Exception:
         sim.status = "failed"
         sim.error_message = "Could not retrieve the uploaded photo. Please try again."
+        await db.commit()
+        return await _get_simulation_response(sim)
+
+    validation = await validate_dental_image(image_data)
+    if not validation.valid:
+        sim.status = "failed"
+        sim.error_message = validation.reason or "Please upload a clear photo of the patient's face with teeth visible."
+        await log_action(
+            db,
+            clinic_id=clinic_id,
+            user_id=current_user.id,
+            action="image.validation_failed",
+            resource_type="simulation",
+            resource_id=sim.id,
+            details={"reason": validation.reason},
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+        )
         await db.commit()
         return await _get_simulation_response(sim)
 

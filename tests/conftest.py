@@ -189,6 +189,22 @@ def mock_gemini():
 
 
 # ---------------------------------------------------------------------------
+# Mock image validation
+# ---------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def mock_image_validator():
+    """Mock the dental image validation - defaults to valid."""
+    from app.services.image_validator import ValidationResult
+
+    with patch(
+        "app.routers.simulations.validate_dental_image",
+        new_callable=AsyncMock,
+        return_value=ValidationResult(valid=True),
+    ) as mock:
+        yield mock
+
+
+# ---------------------------------------------------------------------------
 # Mock email service
 # ---------------------------------------------------------------------------
 @pytest.fixture(autouse=True)
