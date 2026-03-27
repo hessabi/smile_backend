@@ -1,3 +1,4 @@
+import os
 from collections.abc import Callable
 
 from fastapi import Depends, Header, HTTPException
@@ -7,6 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.user import User
+
+_is_test = os.getenv("ENVIRONMENT", "development").lower() == "test"
+
+# ── DEV BYPASS: when ENVIRONMENT=test, accept "Bearer dev-token" ─────────
+_DEV_TOKEN = "dev-token"
+_DEV_FIREBASE_UID = "dev-user-uid"
 
 
 async def get_current_user(
@@ -18,14 +25,18 @@ async def get_current_user(
 
     token = authorization[7:]
 
-    try:
-        decoded = firebase_auth.verify_id_token(token)
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    # DEV BYPASS (remove before production)
+    if _is_test and token == _DEV_TOKEN:
+        firebase_uid = _DEV_FIREBASE_UID
+    else:
+        try:
+            decoded = firebase_auth.verify_id_token(token)
+        except Exception:
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-    firebase_uid = decoded.get("uid")
-    if not firebase_uid:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
+        firebase_uid = decoded.get("uid")
+        if not firebase_uid:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
 
     result = await db.execute(
         select(User).where(User.firebase_uid == firebase_uid)

@@ -17,6 +17,49 @@ logger = logging.getLogger(__name__)
 _is_production = os.getenv("ENVIRONMENT", "development").lower() == "production"
 
 
+async def _seed_dev_data():
+    """Seed a test clinic + user when ENVIRONMENT=test (dev bypass). Remove before production."""
+    from sqlalchemy import select
+    from app.database import async_session_factory
+    from app.models.clinic import Clinic
+    from app.models.user import User
+
+    async with async_session_factory() as db:
+        result = await db.execute(select(User).where(User.firebase_uid == "dev-user-uid"))
+        if result.scalar_one_or_none():
+            return  # already seeded
+
+        import uuid
+        from datetime import datetime, timedelta, timezone
+
+        clinic_id = uuid.uuid4()
+        clinic = Clinic(
+            id=clinic_id,
+            name="Dev Test Clinic",
+            plan="trial",
+            account_type="practice",
+            is_active=True,
+            subscription_status="trial",
+            trial_ends_at=datetime.now(timezone.utc) + timedelta(days=30),
+        )
+        db.add(clinic)
+
+        user = User(
+            id=uuid.uuid4(),
+            clinic_id=clinic_id,
+            firebase_uid="dev-user-uid",
+            email="dev@smilepreview.test",
+            name="Dev User",
+            role="owner",
+            is_active=True,
+            is_platform_admin=True,
+            email_verified=True,
+        )
+        db.add(user)
+        await db.commit()
+        logger.info("Seeded dev test clinic + user")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not firebase_admin._apps:
@@ -24,6 +67,15 @@ async def lifespan(app: FastAPI):
             options={"projectId": settings.firebase_project_id}
         )
         logger.info("Firebase Admin SDK initialized")
+
+    # DEV BYPASS: seed test data (remove before production)
+    _is_test = os.getenv("ENVIRONMENT", "development").lower() == "test"
+    if _is_test:
+        from app.database import engine, Base
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        await _seed_dev_data()
+
     yield
 
 
