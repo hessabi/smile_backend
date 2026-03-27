@@ -1,6 +1,6 @@
 """Tests for image validation service and simulation integration."""
 import json
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import AsyncClient
@@ -64,7 +64,7 @@ async def test_validate_no_face():
         mock_client = AsyncMock()
         mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
-        mock_response_obj = AsyncMock()
+        mock_response_obj = MagicMock()
         mock_response_obj.status_code = 200
         mock_response_obj.json.return_value = mock_response
         mock_client.post.return_value = mock_response_obj

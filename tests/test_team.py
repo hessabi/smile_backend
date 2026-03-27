@@ -102,7 +102,7 @@ async def test_invite_team_member_duplicate_email(
 
 @pytest.mark.asyncio
 async def test_invite_owner_by_non_owner_rejected(
-    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, mock_firebase
+    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, subscription, mock_firebase
 ):
     """Only owners can invite with the owner role."""
     # Create an office_admin user
@@ -112,6 +112,7 @@ async def test_invite_owner_by_non_owner_rejected(
         email="admin@testclinic.com",
         name="Office Admin",
         role="office_admin",
+        email_verified=True,
     )
     db_session.add(admin)
     await db_session.commit()
@@ -234,7 +235,7 @@ async def test_update_user_from_other_clinic_returns_404(
 
 @pytest.mark.asyncio
 async def test_non_owner_cannot_assign_owner_role(
-    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, mock_firebase
+    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, subscription, mock_firebase
 ):
     """Office admin cannot assign owner role to someone."""
     admin = User(
@@ -243,6 +244,7 @@ async def test_non_owner_cannot_assign_owner_role(
         email="admin-assign@testclinic.com",
         name="Admin Assigner",
         role="office_admin",
+        email_verified=True,
     )
     nurse = User(
         clinic_id=clinic.id,
@@ -250,6 +252,7 @@ async def test_non_owner_cannot_assign_owner_role(
         email="target@testclinic.com",
         name="Target Nurse",
         role="nurse",
+        email_verified=True,
     )
     db_session.add_all([admin, nurse])
     await db_session.commit()

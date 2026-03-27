@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.clinic import Clinic
 from app.models.patient import Patient
+from app.models.subscription import Subscription
 from app.models.user import User
 from tests.conftest import AUTH_HEADER
 
@@ -112,7 +113,11 @@ async def test_create_portal_with_customer(
     client: AsyncClient, owner_user: User, db_session: AsyncSession, clinic: Clinic
 ):
     """POST /subscription/portal with a Stripe customer should return portal URL."""
-    clinic.stripe_customer_id = "cus_existing"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.stripe_customer_id = "cus_existing"
     await db_session.commit()
 
     with patch(
@@ -193,8 +198,13 @@ async def test_webhook_subscription_deleted(
 ):
     """Webhook customer.subscription.deleted should cancel the subscription."""
     clinic_id = clinic.id
-    clinic.stripe_subscription_id = "sub_cancel_test"
-    clinic.subscription_status = "active"
+    # Set stripe_subscription_id on the Subscription record
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic_id)
+    )
+    sub = result.scalar_one()
+    sub.stripe_subscription_id = "sub_cancel_test"
+    sub.status = "active"
     await db_session.commit()
 
     event = {
@@ -216,9 +226,11 @@ async def test_webhook_subscription_deleted(
     assert resp.status_code == 200
 
     db_session.expire_all()
-    result = await db_session.execute(select(Clinic).where(Clinic.id == clinic_id))
-    refreshed = result.scalar_one()
-    assert refreshed.subscription_status == "canceled"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic_id)
+    )
+    refreshed_sub = result.scalar_one()
+    assert refreshed_sub.status == "canceled"
 
 
 @pytest.mark.asyncio
@@ -227,8 +239,13 @@ async def test_webhook_payment_failed(
 ):
     """Webhook invoice.payment_failed should set status to past_due."""
     clinic_id = clinic.id
-    clinic.stripe_subscription_id = "sub_fail_test"
-    clinic.subscription_status = "active"
+    # Set stripe_subscription_id on the Subscription record
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic_id)
+    )
+    sub = result.scalar_one()
+    sub.stripe_subscription_id = "sub_fail_test"
+    sub.status = "active"
     await db_session.commit()
 
     event = {
@@ -250,9 +267,11 @@ async def test_webhook_payment_failed(
     assert resp.status_code == 200
 
     db_session.expire_all()
-    result = await db_session.execute(select(Clinic).where(Clinic.id == clinic_id))
-    refreshed = result.scalar_one()
-    assert refreshed.subscription_status == "past_due"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic_id)
+    )
+    refreshed_sub = result.scalar_one()
+    assert refreshed_sub.status == "past_due"
 
 
 # ---------------------------------------------------------------------------
@@ -276,8 +295,13 @@ async def test_expired_trial_blocks_access(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User
 ):
     """Clinics with expired trial should be blocked from gated endpoints."""
-    clinic.subscription_status = "trial"
-    clinic.trial_ends_at = datetime.now(timezone.utc) - timedelta(days=1)
+    # Update the Subscription record (not the Clinic)
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "trial"
+    sub.trial_ends_at = datetime.now(timezone.utc) - timedelta(days=1)
     await db_session.commit()
 
     resp = await client.get("/patients", headers=AUTH_HEADER)
@@ -290,7 +314,12 @@ async def test_active_subscription_allows_access(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User
 ):
     """Clinics with active subscription should access gated endpoints."""
-    clinic.subscription_status = "active"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "active"
+    sub.plan = "standard_monthly"
     await db_session.commit()
 
     resp = await client.get("/patients", headers=AUTH_HEADER)
@@ -302,7 +331,11 @@ async def test_canceled_subscription_blocks_access(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User
 ):
     """Clinics with canceled subscription should be blocked."""
-    clinic.subscription_status = "canceled"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "canceled"
     await db_session.commit()
 
     resp = await client.get("/patients", headers=AUTH_HEADER)
@@ -315,7 +348,11 @@ async def test_past_due_blocks_access(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User
 ):
     """Clinics with past_due payment should be blocked."""
-    clinic.subscription_status = "past_due"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "past_due"
     await db_session.commit()
 
     resp = await client.get("/patients", headers=AUTH_HEADER)
@@ -328,7 +365,11 @@ async def test_ungated_endpoints_work_without_subscription(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User
 ):
     """Auth, clinics, subscription, and health should work without subscription."""
-    clinic.subscription_status = "canceled"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "canceled"
     await db_session.commit()
 
     # /auth/me should work
@@ -420,7 +461,12 @@ async def test_active_subscription_no_daily_limit(
     client: AsyncClient, db_session: AsyncSession, clinic: Clinic, owner_user: User, patient: Patient
 ):
     """Active subscriptions should have no daily simulation limit."""
-    clinic.subscription_status = "active"
+    result = await db_session.execute(
+        select(Subscription).where(Subscription.clinic_id == clinic.id)
+    )
+    sub = result.scalar_one()
+    sub.status = "active"
+    sub.plan = "standard_monthly"
     await db_session.commit()
 
     for i in range(3):

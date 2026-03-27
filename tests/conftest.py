@@ -23,6 +23,7 @@ from app.models.patient import Patient
 from app.models.post_procedure import PostProcedureImage
 from app.models.share_token import ShareToken
 from app.models.simulation import Simulation
+from app.models.subscription import Subscription
 from app.models.user import User
 
 # ---------------------------------------------------------------------------
@@ -267,7 +268,23 @@ async def clinic(db_session: AsyncSession) -> Clinic:
 
 
 @pytest_asyncio.fixture
-async def owner_user(db_session: AsyncSession, clinic: Clinic) -> User:
+async def subscription(db_session: AsyncSession, clinic: Clinic) -> Subscription:
+    """Create a trial subscription for the test clinic."""
+    s = Subscription(
+        clinic_id=clinic.id,
+        plan="trial",
+        status="trial",
+        trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
+        seat_count=5,
+    )
+    db_session.add(s)
+    await db_session.commit()
+    await db_session.refresh(s)
+    return s
+
+
+@pytest_asyncio.fixture
+async def owner_user(db_session: AsyncSession, clinic: Clinic, subscription: Subscription) -> User:
     """Create an owner user with the test Firebase UID."""
     u = User(
         clinic_id=clinic.id,
@@ -275,6 +292,7 @@ async def owner_user(db_session: AsyncSession, clinic: Clinic) -> User:
         email="owner@testclinic.com",
         name="Dr. Test Owner",
         role="owner",
+        email_verified=True,
     )
     db_session.add(u)
     await db_session.commit()
@@ -291,6 +309,7 @@ async def provider_user(db_session: AsyncSession, clinic: Clinic) -> User:
         email="provider@testclinic.com",
         name="Dr. Provider",
         role="provider",
+        email_verified=True,
     )
     db_session.add(u)
     await db_session.commit()
@@ -307,6 +326,7 @@ async def nurse_user(db_session: AsyncSession, clinic: Clinic) -> User:
         email="nurse@testclinic.com",
         name="Nurse Test",
         role="nurse",
+        email_verified=True,
     )
     db_session.add(u)
     await db_session.commit()
@@ -323,6 +343,7 @@ async def platform_admin(db_session: AsyncSession, clinic: Clinic) -> User:
         email="admin@smilepreview.com",
         name="Platform Admin",
         role="owner",
+        email_verified=True,
         is_platform_admin=True,
     )
     db_session.add(u)
@@ -346,7 +367,23 @@ async def other_clinic(db_session: AsyncSession) -> Clinic:
 
 
 @pytest_asyncio.fixture
-async def other_clinic_user(db_session: AsyncSession, other_clinic: Clinic) -> User:
+async def other_clinic_subscription(db_session: AsyncSession, other_clinic: Clinic) -> Subscription:
+    """Create a trial subscription for the other test clinic."""
+    s = Subscription(
+        clinic_id=other_clinic.id,
+        plan="trial",
+        status="trial",
+        trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
+        seat_count=5,
+    )
+    db_session.add(s)
+    await db_session.commit()
+    await db_session.refresh(s)
+    return s
+
+
+@pytest_asyncio.fixture
+async def other_clinic_user(db_session: AsyncSession, other_clinic: Clinic, other_clinic_subscription: Subscription) -> User:
     """Create a user belonging to the other clinic."""
     u = User(
         clinic_id=other_clinic.id,
@@ -354,6 +391,7 @@ async def other_clinic_user(db_session: AsyncSession, other_clinic: Clinic) -> U
         email="other@otherclinic.com",
         name="Dr. Other",
         role="owner",
+        email_verified=True,
     )
     db_session.add(u)
     await db_session.commit()

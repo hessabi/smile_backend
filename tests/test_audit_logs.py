@@ -83,7 +83,7 @@ async def test_audit_logs_nurse_rejected(
 
 @pytest.mark.asyncio
 async def test_audit_logs_office_admin_allowed(
-    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, mock_firebase
+    client: AsyncClient, db_session: AsyncSession, clinic: Clinic, subscription, mock_firebase
 ):
     """Office admins can access audit logs."""
     admin = User(
@@ -92,6 +92,7 @@ async def test_audit_logs_office_admin_allowed(
         email="auditadmin@test.com",
         name="Audit Admin",
         role="office_admin",
+        email_verified=True,
     )
     db_session.add(admin)
     await db_session.commit()

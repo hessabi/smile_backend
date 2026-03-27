@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: smile
+      POSTGRES_PASSWORD: smile_test
+      POSTGRES_DB: smilepreview_test
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smile -d smilepreview_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://smile:smile_test@postgres:5432/smilepreview_test"
+      GCP_PROJECT_ID: "test-project"
+      GCS_BUCKET_NAME: "test-bucket"
+      FIREBASE_PROJECT_ID: "test-firebase"
+      GEMINI_API_KEY: "test-gemini-key"
+      RESEND_API_KEY: "test-resend-key"
+      STRIPE_SECRET_KEY: "sk_test_fake"
+      STRIPE_WEBHOOK_SECRET: "whsec_test_fake"
+      STRIPE_PRICE_ID_MONTHLY: "price_test_monthly"
+      STRIPE_PRICE_ID_ANNUAL: "price_test_annual"
+      STRIPE_PRICE_ID_STUDENT: "price_test_student"
+      SHARE_BASE_URL: "http://localhost:3000"
+      FRONTEND_URL: "http://localhost:3000"
+      CORS_ORIGINS: "http://localhost:3000"
+      TRIAL_DAILY_SIMULATION_LIMIT: "1"
+      ENVIRONMENT: "test"
+      DOCS_API_KEY: ""
